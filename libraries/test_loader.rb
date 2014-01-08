@@ -20,6 +20,13 @@ module MinitestHandler
           recipes = node.run_list.map {|item| item.name if item.type == :recipe }
         end
       end
+      
+      Chef::Log.debug "Loaded recipes #{recipes.inspect}."
+      
+      unless node[:minitest][:ignore_recipes].empty?
+        recipes = recipes.reject {|r| node[:minitest][:ignore_recipes].include? r }
+        Chef::Log.debug "Filtered recipes #{recipes.inspect}."
+      end
   
       recipes.each do |recipe|
         # recipes is actually a list of cookbooks and recipes with :: as a
